@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Windows XP (Luna) 主题预览 · dsh-theme-windowsxp</title>
+    <!--
+      Static preview of the skin. It links the *source* stylesheet, so this page
+      doubles as the fastest way to iterate on the palette without restarting
+      DSH: edit src/windowsxp.css, reload this page.
+
+      Deliberately built out of the SAME hooks the real app exposes — a real
+      <header> for the toolbar band, a `sidebarCol` class for the task pane, and
+      <button> elements for the task-pane cards — so the rules exercised here are
+      the rules that will run inside DSH. Only the window frame and the layout
+      skeleton below are preview-only scaffolding.
+    -->
+    <link rel="stylesheet" href="../src/windowsxp.css" />
+    <style>
+      /* Preview-only. The DSH host serves the wallpaper at
+         `skin-assets/windowsxp/bliss.jpg` (see lib/index.js); opened straight
+         from the filesystem that route does not exist, so this repoints the one
+         image property at the file on disk. The selector list is repeated
+         verbatim from the theme so this wins purely on document order.
+         Nothing else is overridden — not the veil, not the row cards, not the
+         selection state. If the theme gets those wrong, this page shows it. */
+      body[data-dsh-windowsxp],
+      body[data-dsh-windowsxp][data-ds-dark-theme] {
+        --xp-wallpaper-image: url('../assets/bliss.jpg') center / cover no-repeat;
+      }
+    </style>
+    <style>
+      /* ---- preview-only scaffolding: the Bliss desktop and window frame ---- */
+      html {
+        background: linear-gradient(180deg, #2f6d1f 0%, #4a8f2a 42%, #7fb63f 100%);
+      }
+      body {
+        margin: 0;
+        padding: 26px;
+        min-height: 100vh;
+        box-sizing: border-box;
+        font-size: 13px;
+      }
+      .xp-window {
+        max-width: 1040px;
+        margin: 0 auto;
+        background: var(--xp-face);
+        border: 3px solid #0054e3;
+        border-top: 0;
+        border-radius: 8px 8px 0 0;
+        box-shadow: 0 8px 26px #00000059;
+        overflow: hidden;
+      }
+      /* The signature Luna title bar gradient. */
+      .xp-titlebar {
+        background: linear-gradient(
+          180deg,
+          #0058ee 0%, #3593ff 4%, #288eff 6%, #127dff 8%, #036ffc 10%,
+          #0262ee 14%, #0057e5 20%, #0054e3 24%, #0055eb 56%, #005bf5 68%,
+          #0055eb 78%, #0054e3 86%, #0054e3 92%, #0054e3 94%, #0055e9 96%, #0057f0 100%
+        );
+        color: #fff;
+        font-weight: 700;
+        text-shadow: 1px 1px 1px #0a1a5c;
+        padding: 5px 6px 6px 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 5px 5px 0 0;
+      }
+      .xp-titlebar-buttons {
+        display: flex;
+        gap: 2px;
+      }
+      .xp-titlebar-buttons span {
+        width: 21px;
+        height: 21px;
+        border-radius: 3px;
+        background: linear-gradient(180deg, #4a9bff 0%, #1666e8 48%, #0054e3 52%, #0a5ae8 100%);
+        border: 1px solid #ffffff8c;
+        color: #fff;
+        font: 700 11px/19px Tahoma, sans-serif;
+        text-align: center;
+      }
+      .xp-titlebar-buttons span.is-close {
+        background: linear-gradient(180deg, #ff8a6a 0%, #e8492b 48%, #d63a1c 52%, #e8492b 100%);
+      }
+      .xp-menubar {
+        display: flex;
+        gap: 14px;
+        padding: 4px 8px;
+        border-bottom: 1px solid var(--xp-gray);
+      }
+      .xp-menubar u {
+        text-decoration: underline;
+      }
+      /* The toolbar band is a real <header> so the theme paints it beige. */
+      .xp-headerband {
+        border-bottom: 1px solid var(--dsw-alias-border-l3);
+      }
+      .xp-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 4px 8px;
+      }
+      .xp-toolbar-sep {
+        width: 1px;
+        height: 20px;
+        background: var(--xp-gray);
+      }
+      /* Mirrors ui-conversation's own tab design — borderless, with a 2px
+         `:after` underline — because the theme deliberately does not restyle
+         tabs. All the theme contributes is colour: the inactive label reads
+         --dsw-alias-label-tertiary and the active one reads
+         --dsw-alias-state-business-primary, which this skin points at Luna blue.
+         What this section is really checking is that the tabs did NOT come out
+         as chunky Luna gradient boxes: `role="tab"` is excluded from that rule. */
+      .xp-tabs {
+        display: flex;
+        gap: 36px;
+        margin-top: 10px;
+        padding-left: 8px;
+        position: relative;
+      }
+      .xp-tab {
+        position: relative;
+        padding: 0 0 9px;
+        font-size: 13px;
+        font-weight: 500;
+        line-height: 16px;
+        color: var(--dsw-alias-label-tertiary);
+      }
+      .xp-tab::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -1px;
+        height: 2px;
+        border-radius: 2px;
+      }
+      .xp-tab.is-active {
+        color: var(--dsw-alias-state-business-primary);
+      }
+      .xp-tab.is-active::after {
+        background: var(--dsw-alias-state-business-primary);
+      }
+      .xp-address {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 2px 8px 6px;
+      }
+      .xp-address input {
+        flex: 1;
+      }
+
+      /* ---- the three Explorer bands ---- */
+      .xp-body {
+        display: grid;
+        grid-template-columns: 232px 1fr;
+        gap: 0;
+        border-top: 1px solid var(--xp-gray);
+      }
+      /* The Windows caption area. In the app this strip is NOT css: Electron
+         paints it from `titleBarOverlay.color`, which the Desktop preload takes
+         from the computed `background-color` of `--dsw-specific-sidebar-fill`.
+         That is exactly why that token has to be a solid colour — see the note
+         in src/windowsxp.css. This mock is painted the same way so the link
+         between the token and the strip is visible here. */
+      .xp-captionstrip {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        height: 40px;
+        max-width: 1000px;
+        margin: 0 auto 6px;
+        padding-left: 46px;
+        background: var(--dsw-specific-sidebar-fill);
+        border: 1px solid #4a63c4;
+        border-radius: 6px;
+      }
+      /* Verbatim from the preload's shadow stylesheet, so this shows the real
+         thing: transparent buttons, token colours, a 6px hover pill. */
+      .xp-captionstrip button {
+        height: 28px;
+        padding: 0 10px;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--dsw-alias-label-secondary);
+        font: inherit;
+        font-size: 14px;
+        cursor: default;
+      }
+      .xp-captionstrip button:hover {
+        background: var(--dsw-alias-interactive-bg-hover);
+        color: var(--dsw-alias-label-primary);
+      }
+
+      /* 1. task pane — the solid token colour is the base; the gradient is put
+            back by the theme's `[class*='sidebarCol'] > [class*='_root']` rule,
+            which is why the pane is wrapped in an element whose class ends in
+            `_root`. Without that wrapper you would see the flat token colour,
+            which is what a published copy without the rule degrades to. */
+      .xp-taskpane-wrap {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+      .xp-taskpane {
+        background: var(--dsw-specific-sidebar-fill);
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        flex: 1;
+      }
+      .xp-pane-title {
+        color: var(--dsw-alias-label-primary);
+        font-weight: 700;
+        font-size: 12px;
+        padding: 6px 4px 3px;
+      }
+      /* Task-pane rows are <button> elements carrying the very same class
+         substrings ui-workspace emits (`sessionRow` / `projectRow` /
+         `selected`), so the theme's real rules — the white row card, and the
+         solid Luna-blue selection — are what paints them here. Deliberately no
+         local background override and no !important: if the theme gets the
+         "which session am I in" state wrong, this page shows it wrong too. */
+      .xp-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        width: 100%;
+        height: 30px;
+        padding: 0 8px;
+        text-align: left;
+      }
+      .xp-row .xp-time {
+        color: var(--dsw-alias-label-tertiary);
+        font-size: 10px;
+        margin-left: auto;
+      }
+      /* 2. content pane — white, from `--dsw-alias-bg-base`. */
+      .xp-content {
+        background: var(--dsw-alias-bg-base);
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .xp-transcript {
+        height: 380px;
+        overflow-y: scroll;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        grid-auto-rows: min-content;
+        gap: 8px;
+        align-content: start;
+      }
+      .xp-file {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px;
+        border-radius: 3px;
+      }
+      .xp-file:hover {
+        background: var(--xp-hot);
+      }
+      .xp-file-icon {
+        font-size: 22px;
+        line-height: 1;
+      }
+      .xp-code {
+        background: var(--dsw-alias-markdown-code-block);
+        border: 1px solid var(--dsw-alias-border-l1);
+        border-radius: 3px;
+        padding: 8px;
+        margin: 8px 0 0;
+        font-family: var(--ds-font-family-code);
+        font-size: 12px;
+        white-space: pre;
+        overflow-x: auto;
+        grid-column: 1 / -1;
+      }
+      .xp-composer {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      /* Only the things ui-conversation itself provides are written here: a 34px
+         box, `display: grid`, a hard-coded white glyph, and `opacity: .4` when
+         disabled. The fill and the pill radius come from the THEME, which is the
+         whole point — the generic Luna button rule used to repaint the fill beige
+         while leaving that white glyph alone, so the send arrow and the stop
+         square both turned into an unreadable smudge. */
+      .xp-primary {
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        color: #ffffff;
+        transform: translateY(-2px);
+      }
+      .xp-primary:disabled {
+        opacity: 0.4;
+      }
+      .xp-statusbar {
+        display: flex;
+        gap: 4px;
+        padding: 4px;
+        background: var(--xp-face);
+        border-top: 1px solid var(--xp-gray);
+      }
+      .xp-statusbar > div {
+        padding: 4px 8px;
+        border: 1px solid var(--xp-gray);
+        border-radius: 3px;
+        flex: 1;
+        color: var(--dsw-alias-label-secondary);
+        background: var(--xp-face-light);
+      }
+      .xp-swatches {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 16px;
+      }
+      .xp-swatch {
+        width: 122px;
+        border: 1px solid var(--xp-gray);
+        border-radius: 3px;
+        background: var(--xp-face);
+        padding: 6px;
+        text-align: center;
+        font-size: 11px;
+      }
+      h2 {
+        font-size: 14px;
+        margin: 22px auto 8px;
+        max-width: 1040px;
+        color: #fff;
+        text-shadow: 1px 1px 2px #00000080;
+      }
+    </style>
+  </head>
+  <body data-dsh-windowsxp>
+    <!-- The Windows caption area: a blue strip with the app menu, exactly like
+         the real one. Its colour follows --dsw-specific-sidebar-fill, which is
+         why that token is a solid colour. The dropdown that opens from 应用/编辑
+         is a NATIVE OS menu and cannot be shown here or styled by the theme. -->
+    <div class="xp-captionstrip">
+      <button type="button">应用</button>
+      <button type="button">编辑</button>
+    </div>
+    <div class="xp-window">
+      <div class="xp-titlebar">
+        <span>DeepSeek Harness</span>
+        <span class="xp-titlebar-buttons"><span>_</span><span>□</span><span class="is-close">×</span></span>
+      </div>
+      <div class="xp-menubar">
+        <span><u>F</u>ile</span><span><u>E</u>dit</span><span><u>V</u>iew</span><span><u>F</u>avorites</span><span><u>T</u>ools</span><span><u>H</u>elp</span>
+      </div>
+      <!-- real <header> → the theme paints this band beige -->
+      <header class="xp-headerband">
+        <div class="xp-toolbar">
+          <button type="button">◀ Back</button>
+          <button type="button">▶</button>
+          <span class="xp-toolbar-sep"></span>
+          <button type="button">🔍 Search</button>
+          <button type="button">📁 Folders</button>
+        </div>
+        <!-- real `data-conversation-tabs` + `role="tab"`: ui-conversation's own
+             underline-tab design, and proof that the theme's generic Luna button
+             rule leaves role="tab" alone -->
+        <div class="xp-tabs" role="tablist" data-conversation-tabs>
+          <button type="button" role="tab" aria-selected="true" class="xp-tab is-active">对话</button>
+          <button type="button" role="tab" aria-selected="false" class="xp-tab">轨迹</button>
+        </div>
+      </header>
+      <div class="xp-address">
+        <span>Address</span>
+        <input type="text" value="E:\Extras" readonly />
+        <button type="button">Go ➜</button>
+      </div>
+
+      <div class="xp-body">
+        <!-- real `sidebarCol` class, wrapping a real `*_root` child: the theme's
+             `[class*='sidebarCol'] > [class*='_root']` rule is what paints the
+             gradient, so this wrapper is what makes the preview show it -->
+        <div class="xp-taskpane-wrap sidebarCol">
+        <div class="xp-taskpane xp_root">
+          <div class="xp-pane-title">工作区</div>
+          <button type="button" class="xp-row projectRow">📁 browser-sessions</button>
+          <button type="button" class="xp-row projectRow">📁 默认工作区</button>
+          <div class="xp-pane-title">最近会话</div>
+          <button type="button" class="xp-row sessionRow is-selected">
+            制作 Windows98 风格 DSH 主题 <span class="xp-time">1分钟前</span>
+          </button>
+          <button type="button" class="xp-row sessionRow">
+            安装 Cadence 软件 <span class="xp-time">5分钟前</span>
+          </button>
+          <button type="button" class="xp-row sessionRow">
+            重构 sandbox ACL 诊断 <span class="xp-time">2小时前</span>
+          </button>
+          <button type="button" class="xp-row sessionRow">
+            图片批处理脚本 <span class="xp-time">昨天</span>
+          </button>
+          <div class="xp-pane-title">其它位置</div>
+          <button type="button" class="xp-row">▢ 插件</button>
+          <button type="button" class="xp-row">▢ 设置</button>
+        </div>
+        </div>
+
+        <div class="xp-content">
+          <!-- real `data-conversation-scroll` attribute → the theme's wallpaper
+               rule paints this, exactly as it paints the live scroll body -->
+          <div class="xp-transcript" data-conversation-scroll>
+            <div class="xp-file"><span class="xp-file-icon">📁</span><span>bliss_dark</span></div>
+            <div class="xp-file"><span class="xp-file-icon">🖼</span><span>No Themes</span></div>
+            <div class="xp-file"><span class="xp-file-icon">📄</span><span>totally_safe_picture.jpeg</span></div>
+            <div class="xp-file"><span class="xp-file-icon">⚙</span><span>Display Enhancer</span></div>
+            <div class="xp-file"><span class="xp-file-icon">🧹</span><span>System Cleanup</span></div>
+            <div class="xp-file"><span class="xp-file-icon">🔒</span><span>Wanna Laugh</span></div>
+            <div class="xp-code">$ dsh plugin --profile desktop add ./dsh-theme-windowsxp
+✓ 已加入 dsh.profile.bundles
+→ 侧边栏「插件」页可一键开关</div>
+          </div>
+          <!-- real `data-composer-seat` + a `*_primary` button: the theme's
+               rule restores the component's own blue fill and pill radius, so
+               the white glyph is legible. Left: send (enabled). Right: the same
+               button disabled, which is what the operator saw — except it used
+               to be white-on-beige, i.e. invisible even when enabled. -->
+          <div class="xp-composer" data-composer-seat>
+            <input type="text" placeholder="给智能体发消息…" style="flex: 1" />
+            <button type="button" class="xp-primary xp_primary" aria-label="发送消息">
+              <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+                <path d="M8 13.5V3M8 3 3.5 7.5M8 3l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+            <button type="button" class="xp-primary xp_primary" aria-label="停止生成">
+              <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+                <rect x="3" y="3" width="10" height="10" rx="3" fill="currentColor" />
+              </svg>
+            </button>
+            <button type="button" class="xp-primary xp_primary" aria-label="发送消息" disabled>
+              <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+                <path d="M8 13.5V3M8 3 3.5 7.5M8 3l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="xp-statusbar">
+        <div>6 个对象</div>
+        <div>我的电脑</div>
+        <div>可用空间 12.8 GB</div>
+      </div>
+    </div>
+
+    <h2>三条色带的语义 token</h2>
+    <div class="xp-swatches">
+      <div class="xp-swatch" style="background: var(--dsw-alias-bg-base)">bg-base（白色内容区）</div>
+      <div class="xp-swatch" style="background: #ece9d8">xp-face（米色工具栏）</div>
+      <div class="xp-swatch" style="background: linear-gradient(180deg, #7ba2e7, #5f78d6); color: #fff">
+        sidebar-fill（蓝色任务窗格）
+      </div>
+      <div class="xp-swatch" style="background: var(--dsw-alias-brand-primary); color: #fff">brand-primary</div>
+      <div class="xp-swatch" style="background: var(--dsw-alias-interactive-bg-hover)">hover</div>
+      <div class="xp-swatch" style="background: var(--dsw-alias-state-warn-primary)">warn</div>
+    </div>
+    <p style="max-width: 1040px; color: #fff; font-size: 12px; text-shadow: 1px 1px 2px #00000080">
+      按钮悬停会泛起 Luna 的金色高光，按下则变暗下沉；任务窗格里的行是白色卡片 —— 鼠标放上去点点看。
+    </p>
+  </body>
+</html>
