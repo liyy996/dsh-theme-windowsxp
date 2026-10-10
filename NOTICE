@@ -1,0 +1,39 @@
+dsh-theme-windowsxp — third-party notices
+==========================================
+
+Two files in assets/ are third-party copyrighted material. Neither is covered by
+this package's MIT licence, and neither is listed in the `files` array in
+package.json, so a published copy of this package contains neither and both
+client-side fallbacks take over.
+
+assets/bliss.jpg
+----------------
+
+The "Bliss" photograph — the rolling green hill that shipped as the default
+Windows XP desktop wallpaper — is copyright © Microsoft Corporation /
+Charles O'Rear.
+
+It is present in this checkout because the operator supplied it for their own
+machine, personal use. Without it the stylesheet falls back to the pure-CSS
+recreation of the same composition held in `--xp-wallpaper-fallback`, and nothing
+breaks.
+
+assets/chime.wav
+----------------
+
+The completion chime is `chimes.wav` from this machine's own `C:\Windows\Media`.
+It is copyright © Microsoft Corporation.
+
+Without it the notifier falls back to the synthesised bell in `playSynth()` — an
+A-major arpeggio built from two partials per note — and nothing breaks.
+
+To use a different cue — including the genuine Windows XP notification sound, if
+you have it — drop any WAV at `assets/chime.wav`. No code change is needed.
+
+Do not add either file to `files`, and do not redistribute this package with them
+in it.
+
+Everything else
+---------------
+
+MIT. See README.md.
