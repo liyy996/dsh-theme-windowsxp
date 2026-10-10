@@ -35,7 +35,18 @@ body[data-dsh-windowsxp][data-ds-dark-theme] {
   --xp-hot: #e4edfa;
   --xp-field: #ffffff;
   --xp-field-border: #7f9db9;
+  /* #ACA899 is the period-correct Windows grey and it is fine for a 3D edge or a
+   * divider — but it was also doing duty as *text* colour, where it lands at
+   * 2.3:1 on white and 1.6:1 on --xp-face, i.e. genuinely unreadable. Reported
+   * from real use as "有很多字我都看不清".
+   *
+   * So the two jobs are split: --xp-gray stays the chrome grey, and anything that
+   * renders glyphs uses --xp-gray-ink instead — #6A6859 is still visibly dimmed,
+   * but measures 5.6:1 on white and 4.6:1 on --xp-face, both over the 4.5:1 line.
+   * It keeps the Windows habit of grey text carrying a 1px white shadow (the
+   * "etched" disabled look), which reads better again at small sizes. */
   --xp-gray: #aca899;
+  --xp-gray-ink: #6a6859;
   --xp-text: #000000;
 
   /* The Explorer task pane is not a flat colour: it is a vertical periwinkle
@@ -137,8 +148,8 @@ body[data-dsh-windowsxp][data-ds-dark-theme] {
   --dsw-alias-label-primary-inverted: #ffffff;
   --dsw-alias-label-secondary: #1a1a1a;
   --dsw-alias-label-tertiary: #4a4a44;
-  --dsw-alias-label-caption: #6d6a5e;
-  --dsw-alias-label-dimmed: var(--xp-gray);
+  --dsw-alias-label-caption: var(--xp-gray-ink);
+  --dsw-alias-label-dimmed: var(--xp-gray-ink);
   --dsw-alias-label-document-preview: var(--xp-text);
   --dsw-alias-label-shimmer: #0000004d;
   --dsw-alias-label-deep-diving: var(--xp-blue);
@@ -369,7 +380,7 @@ body[data-dsh-windowsxp] :is(input:not([type='checkbox']):not([type='radio']), t
  * zero, so this keeps its original (0,2,2) and the sidebar keeps winning. */
 body[data-dsh-windowsxp] button:not(:disabled):where(:not([role='tab']):not([role='menuitem']):not([role='option']):not([role='treeitem'])
     :not([role='radio']):not([role='checkbox']):not([role='switch'])
-    :not([role='menuitemradio']):not([role='menuitemcheckbox']):not([class*='iconButton'])
+    :not([role='menuitemradio']):not([role='menuitemcheckbox']):not([class*='iconButton']):not([class*='_primary'])
   ) {
   background: var(--xp-button);
   border: 1px solid var(--xp-blue-dark);
@@ -378,13 +389,13 @@ body[data-dsh-windowsxp] button:not(:disabled):where(:not([role='tab']):not([rol
 }
 body[data-dsh-windowsxp] button:not(:disabled):where(:not([role='tab']):not([role='menuitem']):not([role='option']):not([role='treeitem'])
     :not([role='radio']):not([role='checkbox']):not([role='switch'])
-    :not([role='menuitemradio']):not([role='menuitemcheckbox']):not([class*='iconButton'])
+    :not([role='menuitemradio']):not([role='menuitemcheckbox']):not([class*='iconButton']):not([class*='_primary'])
   ):hover {
   background: var(--xp-button-hover);
 }
 body[data-dsh-windowsxp] button:not(:disabled):where(:not([role='tab']):not([role='menuitem']):not([role='option']):not([role='treeitem'])
     :not([role='radio']):not([role='checkbox']):not([role='switch'])
-    :not([role='menuitemradio']):not([role='menuitemcheckbox']):not([class*='iconButton'])
+    :not([role='menuitemradio']):not([role='menuitemcheckbox']):not([class*='iconButton']):not([class*='_primary'])
   ):active {
   background: var(--xp-button-active);
   border-color: #7d7d7d;
@@ -394,11 +405,16 @@ body[data-dsh-windowsxp] button:not(:disabled):where(:not([role='tab']):not([rol
    one of its options. */
 body[data-dsh-windowsxp] button:disabled:where(:not([role='tab']):not([role='menuitem']):not([role='option']):not([role='treeitem'])
     :not([role='radio']):not([role='checkbox']):not([role='switch'])
-    :not([role='menuitemradio']):not([role='menuitemcheckbox']):not([class*='iconButton'])
+    :not([role='menuitemradio']):not([role='menuitemcheckbox']):not([class*='iconButton']):not([class*='_primary'])
   ) {
   background: var(--xp-face);
   border: 1px solid var(--xp-gray);
-  color: var(--xp-gray);
+  /* Readable, not invisible. The real Windows disabled colour (#ACA899) is only
+   * 1.6:1 on this fill; --xp-gray-ink is 4.6:1 and still reads as disabled, the
+   * more so with XP's 1px white etch underneath it. The market's card actions sit
+   * disabled whenever a plugin is already installed, so this is not an edge case. */
+  color: var(--xp-gray-ink);
+  text-shadow: 1px 1px 0 #ffffff;
 }
 
 /* The chosen answer in a question, which upstream distinguishes from *hover* by a

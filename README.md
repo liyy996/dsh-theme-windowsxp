@@ -397,9 +397,18 @@ cd dsh-theme-windowsxp
 node scripts/build.mjs        # windowsxp.css + notify.css → lib/client.js
 node scripts/check-tokens.mjs # 校验每个 --dsw-* 名字在真实清单里存在
 node scripts/check-cascade.mjs# 校验规则优先级顺序
+node scripts/check-contrast.mjs # 校验每个文字 token 都过 4.5:1
 node scripts/smoke.mjs        # 47 项：协议 / 皮肤 / 两种提醒 / 两个方向的误判 / 卸载
 node scripts/smoke-host.mjs   # 38 项：素材路由（含路径穿越与条件请求）
 ```
+
+**三个检查器各管一类已经栽过的坑**：
+
+| 检查器 | 它防的事 |
+|---|---|
+| `check-tokens` | token 名拼错，静默失效 |
+| `check-cascade` | 新规则悄悄压过老规则（栽过三次） |
+| `check-contrast` | **把装饰灰当文字灰用** —— `#ACA899` 压在米色上只有 1.6:1，主人报「很多字我都看不清」就是这个 |
 
 `smoke.mjs` 里的**DOM stub 是故意不完整的**：没有 `MutationObserver`、没有 `requestAnimationFrame`、没有 `setInterval`。万一将来又退回「监听 DOM 判断状态」的写法，测试会直接报错而不是悄悄通过。
 

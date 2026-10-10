@@ -44,7 +44,7 @@
   ],
   "scripts": {
     "build": "node scripts/build.mjs",
-    "check": "node scripts/check-tokens.mjs && node scripts/check-cascade.mjs",
+    "check": "node scripts/check-tokens.mjs && node scripts/check-cascade.mjs && node scripts/check-contrast.mjs",
     "test": "node scripts/smoke.mjs && node scripts/smoke-host.mjs"
   },
   "engines": {

@@ -332,6 +332,16 @@ check(
   "and the catch-all class exclusion is still there",
   buttonRules.every((rule) => rule.includes("[class*='iconButton']")),
 );
+// Filled buttons — the composer's send/stop, and every `variant="primary"` the
+// primitives draw, such as the market's card actions — carry their own fill and a
+// hard-coded white glyph. Repainting that fill leaves white-on-beige, which is
+// effectively invisible. Whether the app's own class really contains `_primary`
+// cannot be read from here, so the guard is only that the exclusion never
+// silently disappears.
+check(
+  "and filled buttons stay excluded",
+  buttonRules.every((rule) => rule.includes("[class*='_primary']")),
+);
 
 console.log(failures === 0 ? "\nPASS" : `\n${failures} check(s) failed`);
 process.exit(failures === 0 ? 0 : 1);
