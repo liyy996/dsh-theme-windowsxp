@@ -1,0 +1,73 @@
+/* ============================================================================
+ * In-page toast — the popup half of the Windows XP experience pack.
+ *
+ * Injected into a shadow root of the plugin's own host element, so the app's
+ * stylesheets cannot reach it and it cannot leak styles back. It stays on-theme
+ * anyway because colour, radius, shadow and font all read `--dsw-*` tokens:
+ * custom properties inherit through a shadow boundary, so this card follows
+ * whatever theme is active — including this package's own Luna palette.
+ *
+ * Two tones share the card. Green dot = a turn finished; amber dot = the agent
+ * stopped and is waiting for an answer, matching the cue that plays with it.
+ * ========================================================================= */
+
+:host {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 2147483000;
+  pointer-events: auto;
+  animation: dsh-notify-in 160ms var(--ds-ease-in-out, ease-out);
+}
+
+@keyframes dsh-notify-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.card {
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 232px;
+  max-width: 340px;
+  padding: 10px 12px;
+  border-radius: var(--dsw-radius-lg, 12px);
+  background: var(--dsw-alias-bg-overlay, #ffffff);
+  color: var(--dsw-alias-label-primary, #000000);
+  border: 1px solid var(--dsw-alias-border-l2, #0000001a);
+  box-shadow: var(--dsw-elevation-panel, 0 4px 16px #00000026);
+  font-family: var(--dsw-font-family, system-ui, sans-serif);
+  font-size: 13px;
+  line-height: 20px;
+  cursor: pointer;
+}
+
+.dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-top: 6px;
+  border-radius: 999px;
+  background: var(--dsw-alias-state-success-primary, #22c55e);
+}
+
+/* Waiting for an answer, not reporting a result. */
+.card.approval .dot {
+  background: var(--dsw-alias-state-warn-primary, #f59e0b);
+}
+
+.title {
+  font-weight: 500;
+}
+
+.body {
+  color: var(--dsw-alias-label-secondary, #000000a6);
+}
