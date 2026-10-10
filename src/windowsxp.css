@@ -1,0 +1,666 @@
+/* ============================================================================
+ * Windows XP (Luna Blue) theme for DeepSeek Harness
+ * ----------------------------------------------------------------------------
+ * Loaded inside `body[data-dsh-windowsxp]`. Everything the DSH design system
+ * exposes as a `--dsw-*` token is re-pointed at the Windows XP Luna palette;
+ * what tokens cannot express (the Luna gradient buttons, the #7F9DB9 field
+ * border, the rounded blue scrollbar) is written as ordinary rules afterwards.
+ *
+ * Both selector variants are listed everywhere on purpose: the second one
+ * (`[data-ds-dark-theme]`) outranks `body[data-ds-dark-theme]` from
+ * design-platform.css, so Luna keeps its beige face even when the user picked
+ * "dark" or "system". Windows XP had no dark mode.
+ *
+ * Luna palette reference
+ *   #ECE9D8  the "3D Objects" face every dialog and toolbar is painted in
+ *   #0054E3  Luna frame blue (logo / active title bar base)
+ *   #3A93FF  the light end of the title-bar gradient
+ *   #003C74  the dark blue 1px outline around Luna controls
+ *   #316AC5  the selection blue (highlighted list rows, selected text)
+ *   #7F9DB9  the grey-blue border of every text field
+ *   #ACA899  disabled text and soft separators
+ * ========================================================================= */
+
+/* ---------------------------------------------------------------------------
+ * 1. The Luna palette (no --dsw-* here, only our own names)
+ * ------------------------------------------------------------------------ */
+body[data-dsh-windowsxp],
+body[data-dsh-windowsxp][data-ds-dark-theme] {
+  --xp-face: #ece9d8;
+  --xp-face-light: #f5f4ec;
+  --xp-blue: #0054e3;
+  --xp-blue-bright: #3a93ff;
+  --xp-blue-dark: #003c74;
+  --xp-highlight: #316ac5;
+  --xp-hot: #e4edfa;
+  --xp-field: #ffffff;
+  --xp-field-border: #7f9db9;
+  --xp-gray: #aca899;
+  --xp-text: #000000;
+
+  /* The Explorer task pane is not a flat colour: it is a vertical periwinkle
+     gradient, and the pane's own labels sit on it in dark blue. */
+  --xp-pane: linear-gradient(180deg, #7ba2e7 0%, #6c86dc 55%, #5f78d6 100%);
+  /* ...and this is its middle stop, which is what the token below has to use. */
+  --xp-pane-flat: #6c86dc;
+  --xp-pane-ink: #00309c;
+  /* The XP task pane is a stack of white cards floating on that gradient. */
+  --xp-pane-card: #ffffff;
+  --xp-pane-card-hover: #eef4ff;
+  --xp-pane-card-border: #b8c8ea;
+
+  /* The "Bliss" desktop.
+   *
+   * Three separate properties on purpose, so any one of them can be swapped
+   * without touching the others:
+   *
+   *   --xp-wallpaper-image     the photograph, served by this plugin's own
+   *                            same-origin route (lib/index.js). The URL is
+   *                            left relative so it resolves against the document
+   *                            base, which keeps it correct behind a
+   *                            reverse-proxy mount. The preview page repoints
+   *                            this one property at the file on disk.
+   *   --xp-wallpaper-fallback  a pure-CSS recreation of the same composition —
+   *                            deep blue sky, four cloud puffs, and a rolling
+   *                            hill cut from an ellipse whose centre is pushed
+   *                            below the box. It shows whenever the bitmap is
+   *                            missing, which is the case for a published copy
+   *                            of this package: the photo is third-party
+   *                            copyrighted artwork and is deliberately kept out
+   *                            of `files` in package.json.
+   *   --xp-wallpaper-veil      how much white is laid over the scene before text
+   *                            sits on top. This is the only knob worth turning:
+   *                            0 is the bare photograph (and black body text on
+   *                            the shaded grass drops to ~2.5:1), 0.8 is a
+   *                            barely-there tint. 0.32 keeps the hill vivid while
+   *                            body text still clears ~5.8:1 at its darkest. */
+  --xp-wallpaper-veil: 0.32;
+  --xp-wallpaper-image: url("skin-assets/windowsxp/bliss.jpg") center / cover no-repeat;
+  --xp-wallpaper-fallback:
+    radial-gradient(closest-side at 24% 20%, #ffffffd9, #ffffff00 72%),
+    radial-gradient(closest-side at 38% 13%, #ffffffb3, #ffffff00 70%),
+    radial-gradient(closest-side at 76% 17%, #ffffffcc, #ffffff00 74%),
+    radial-gradient(closest-side at 60% 30%, #ffffff8c, #ffffff00 70%),
+    radial-gradient(125% 82% at 50% 120%, #9ad95c 0%, #6cbb32 34%, #478f1f 62%, #336f16 84%, #336f1600 88%),
+    linear-gradient(180deg, #1f6fc4 0%, #3f8fd0 36%, #8ec4e8 62%, #d8ecf8 100%);
+  --xp-wallpaper:
+    linear-gradient(rgba(255, 255, 255, var(--xp-wallpaper-veil)), rgba(255, 255, 255, var(--xp-wallpaper-veil))),
+    var(--xp-wallpaper-image),
+    var(--xp-wallpaper-fallback);
+
+  /* The Luna button is a four-stop vertical gradient, not a flat fill. */
+  --xp-button: linear-gradient(180deg, #ffffff 0%, #f4f3ec 46%, #e9e6d8 52%, #ece9d8 100%);
+  --xp-button-hover: linear-gradient(180deg, #fffef8 0%, #fdf4d3 46%, #f8e6a4 52%, #fbf2d3 100%);
+  --xp-button-active: linear-gradient(180deg, #cdcabb 0%, #dcd9cc 50%, #e6e3d6 100%);
+}
+
+/* ---------------------------------------------------------------------------
+ * 2. Token layer: every semantic slot points at the palette above
+ * ------------------------------------------------------------------------ */
+body[data-dsh-windowsxp],
+body[data-dsh-windowsxp][data-ds-dark-theme] {
+  /* -- surfaces ---------------------------------------------------------- */
+  /* bg-base paints the window frame *and* the conversation root (ui-layout's
+     `.frame` and ui-conversation's `.root` both read it). Explorer's content
+     pane is white, so that is what this is; the beige moves to the toolbar
+     band (`header`) and to popups, and the blue moves to the task pane. */
+  --dsw-alias-bg-base: var(--xp-field);
+  --dsw-alias-bg-layer-1: var(--xp-field);
+  --dsw-alias-bg-layer-2: var(--xp-face-light);
+  --dsw-alias-bg-layer-3: var(--xp-face);
+  --dsw-alias-bg-overlay: var(--xp-face);
+  --dsw-alias-bg-module-platform: var(--xp-face-light);
+  --dsw-alias-bg-multi-select: var(--xp-face);
+  --dsw-alias-bg-document-preview: var(--xp-field);
+  --dsw-alias-bg-document-selection: var(--xp-highlight);
+  --dsw-alias-bg-skeleton: #7f9db940;
+  --dsw-alias-bg-mask-1: #00000040;
+  --dsw-alias-bg-mask-2: #00000020;
+  --dsw-alias-bg-mask-3: #00000080;
+  --dsw-alias-bg-mask-drop: #ece9d8b3;
+  --dsw-alias-bg-mask-photo: #000000e0;
+
+  /* -- borders ----------------------------------------------------------- */
+  --dsw-alias-border-l1: var(--xp-gray);
+  --dsw-alias-border-l2: #d6d2c2;
+  --dsw-alias-border-l2-darkmode-thin: #d6d2c2;
+  --dsw-alias-border-l3: var(--xp-blue-dark);
+  --dsw-alias-border-l4: var(--xp-gray);
+  --dsw-alias-border-inverted: #ffffff00;
+  --dsw-alias-border-inverted2: #ffffff26;
+
+  /* -- text -------------------------------------------------------------- */
+  --dsw-alias-label-primary: var(--xp-text);
+  --dsw-alias-label-primary-bluish: var(--xp-text);
+  --dsw-alias-label-primary-dimmed: var(--xp-text);
+  --dsw-alias-label-primary-foreground: #ffffff;
+  --dsw-alias-label-primary-inverted: #ffffff;
+  --dsw-alias-label-secondary: #1a1a1a;
+  --dsw-alias-label-tertiary: #4a4a44;
+  --dsw-alias-label-caption: #6d6a5e;
+  --dsw-alias-label-dimmed: var(--xp-gray);
+  --dsw-alias-label-document-preview: var(--xp-text);
+  --dsw-alias-label-shimmer: #0000004d;
+  --dsw-alias-label-deep-diving: var(--xp-blue);
+  --dsw-alias-label-deep-diving-shimmer: var(--xp-blue-bright);
+  --dsw-alias-link: #0000ee;
+
+  /* -- brand & states ---------------------------------------------------- */
+  --dsw-alias-brand-primary: var(--xp-blue);
+  --dsw-alias-brand-primary-invert: var(--xp-blue);
+  --dsw-alias-brand-primary-new-colorprimary-new-color: var(--xp-blue);
+  --dsw-alias-brand-text: var(--xp-text);
+  --dsw-alias-state-business-primary: var(--xp-blue);
+  --dsw-alias-state-business-tertiary: #dbe6f7;
+  --dsw-alias-state-error-primary: #cc0000;
+  --dsw-alias-state-error-secondary: #e8503a;
+  --dsw-alias-state-idle-primary: var(--xp-gray);
+  --dsw-alias-state-success-primary: #1a8a1a;
+  --dsw-alias-state-success-secondary: #3aa93a;
+  --dsw-alias-state-success-tertiary: #e2f5e2;
+  --dsw-alias-state-warn-label: #8a6000;
+  --dsw-alias-state-warn-primary: #ffc800;
+  --dsw-alias-state-warn-secondary: #ffe08a;
+  --dsw-alias-state-warn-tertiary: #fff7db;
+
+  /* -- buttons & interaction --------------------------------------------- */
+  /* The primary fill stays Luna blue because `label-primary-foreground` is
+     white in this skin: a beige primary button would render white-on-beige. */
+  --dsw-alias-button-contrast-fill: var(--xp-blue);
+  --dsw-alias-button-elevated-fill: var(--xp-face);
+  --dsw-alias-button-floating-fill: var(--xp-face);
+  --dsw-alias-button-floating-hover: var(--xp-face-light);
+  --dsw-alias-button-ghost-active-border: var(--xp-blue);
+  --dsw-alias-button-ghost-active-fill: var(--xp-face);
+  --dsw-alias-button-ghost-active-hover: var(--xp-face-light);
+  --dsw-alias-button-info-fill: var(--xp-blue);
+  --dsw-alias-button-info-hover: #1a66f0;
+  --dsw-alias-button-primary-dimmed: #a8bee8;
+  --dsw-alias-button-primary-fill: var(--xp-blue);
+  --dsw-alias-button-primary-hover: #1a66f0;
+  --dsw-alias-button-tool-bar-fill: #ece9d8cc;
+  --dsw-alias-button-tool-bar-fill-invisible: #ece9d800;
+  --dsw-alias-button-tool-bar-hover: #f5f4ece6;
+  --dsw-alias-interactive-bg-hover: var(--xp-hot);
+  --dsw-alias-interactive-bg-active: #c7d8f0;
+  --dsw-alias-interactive-bg-hover-accent: #d3e2f7;
+  --dsw-alias-interactive-bg-hover-danger: #cc000026;
+  --dsw-alias-interactive-bg-hover-solid: var(--xp-hot);
+
+  /* -- markdown & diff --------------------------------------------------- */
+  --dsw-alias-markdown-citation: var(--xp-face);
+  --dsw-alias-markdown-code-block: var(--xp-field);
+  --dsw-alias-markdown-code-block-banner: var(--xp-face);
+  --dsw-alias-markdown-code-segment-selected: var(--xp-field);
+  --dsw-alias-markdown-code-segment-unselected: var(--xp-face);
+  --dsw-alias-markdown-inline-code: var(--xp-field);
+  --dsw-alias-markdown-placeholder: var(--xp-face);
+  --dsw-alias-markdown-tag: var(--xp-face);
+  --dsw-alias-code-diff-added: #1a8a1a1f;
+  --dsw-alias-code-diff-deleted: #cc00001f;
+  --dsw-alias-file-diff-added-bg: #e2f7e2;
+  --dsw-alias-file-diff-added-gutter: #eefbee;
+  --dsw-alias-file-diff-added-marker: #1a8a1a;
+  --dsw-alias-file-diff-deleted-bg: #fde6e2;
+  --dsw-alias-file-diff-deleted-gutter: #fdf0ee;
+  --dsw-alias-file-diff-deleted-marker: #cc0000;
+
+  /* -- menus, popups, tooltips, toasts ----------------------------------- */
+  --dsw-menu-surface-fill: #ece9d8fa;
+  --dsw-specific-menu: var(--xp-face);
+  --dsw-specific-selector: var(--xp-face);
+  --dsw-specific-tip: #ffffe1;
+  --dsw-specific-input-major: var(--xp-field);
+  --dsw-specific-login-input: var(--xp-field);
+  --dsw-specific-bubble: #f2f6ff;
+  --dsw-specific-bubble-highlight: #dce9f9;
+  /* MUST be a solid colour — the pane gradient cannot live here.
+   *
+   * Two consumers read this one token:
+   *   ui-sidebar        `background: var(--dsw-specific-sidebar-fill)`   — gradient OK
+   *   Desktop preload   `background-color: var(--dsw-specific-sidebar-fill)` on a
+   *                     hidden probe, measured with a canvas and sent over
+   *                     `dsh-desktop:windows-appearance` to the main process,
+   *                     which calls `setTitleBarOverlay({ color })`.
+   *
+   * `background-color: linear-gradient(…)` is an invalid declaration, so with a
+   * gradient here the probe returns transparent and the Windows caption strip
+   * silently falls back to the OS default (#f9fafb) — a pale band that matches
+   * nothing else in this skin. Feeding it the flat middle stop makes the caption
+   * strip Luna blue instead, and the gradient is re-applied to the pane itself in
+   * the chrome layer below, where only ui-sidebar can see it. */
+  --dsw-specific-sidebar-fill: var(--xp-pane-flat);
+  --dsw-specific-sidebar-nav-item-active: var(--xp-pane-card);
+  --dsw-specific-sidebar-nav-item-active-accent: var(--xp-pane-card);
+  --dsw-specific-sidebar-nav-item-hover: #ffffff99;
+  --dsw-alias-menu-group-header-fill: #ece9d8f0;
+  --dsw-alias-menu-icon: #1a1a1a;
+  --dsw-alias-toast-bg: #ffffe1;
+  --dsw-alias-toast-label: var(--xp-text);
+  --dsw-alias-tooltip-bg: #ffffe1;
+  --dsw-alias-tooltip-key-bg: #fff7c0;
+  --dsw-alias-turn-trigger-bg: var(--xp-face);
+  --dsw-alias-turn-trigger-bg-hover: var(--xp-face-light);
+
+  /* -- scrollbars & switch ----------------------------------------------- */
+  --dsw-alias-scrollbar-bg-l1: #c9d5ee;
+  --dsw-alias-scrollbar-bg-l2: #c9d5ee;
+  --dsw-alias-scrollbar-hover-l1: #b4c6e8;
+  --dsw-alias-scrollbar-hover-l2: #b4c6e8;
+  --dsw-alias-switch-thumb: #ffffff;
+
+  /* -- geometry: Luna controls are rounded, unlike its predecessor ------- */
+  --dsw-radius-xs: 3px;
+  --dsw-radius-sm: 3px;
+  --dsw-radius-md: 4px;
+  --dsw-radius-lg: 6px;
+  --dsw-radius-xl: 8px;
+  --dsw-radius-panel: 8px;
+  /* Luna's corners are circular arcs, not superellipses. */
+  --dsw-corner-shape: round;
+
+  /* -- typography: Tahoma is the XP UI face ------------------------------ */
+  --dsw-font-family: Tahoma, "Microsoft YaHei", "MS Sans Serif", SimSun, sans-serif;
+  --dsw-font-family-brand: Tahoma, "Microsoft YaHei", "MS Sans Serif", SimSun, sans-serif;
+  --ds-font-family-code: "Lucida Console", Consolas, "Courier New", monospace;
+
+  /* -- focus ring: XP still draws the Win9x dotted rectangle ------------ */
+  --dsw-focus-ring-width: 1px;
+  --dsw-focus-ring-color: var(--xp-text);
+
+  /* -- XP drops soft shadows again after the flat 9x era ---------------- */
+  --dsw-shadow-lv1: 0 1px 2px #0000001a;
+  --dsw-shadow-lv1-blur: 0 2px 6px #00000014;
+  --dsw-shadow-lv2: 0 2px 8px #00000024;
+  --dsw-shadow-lv3: 0 4px 16px #00000033;
+  --dsw-menu-backdrop-filter: none;
+
+  /* -- scrollbar geometry ------------------------------------------------ */
+  --dsh-scrollbar-width: 17px;
+  --dsh-scrollbar-thumb: #c9d5ee;
+  --dsh-scrollbar-thumb-hover: #b4c6e8;
+  --dsh-scrollbar-thumb-border: 0px;
+  --dsh-scrollbar-track-margin: 0px;
+
+  /* -- syntax highlighting ---------------------------------------------- */
+  --shiki-token-constant: #0000ff;
+  --shiki-token-string: #1a8a1a;
+  --shiki-token-comment: #7f7f6f;
+  --shiki-token-keyword: #0000ff;
+  --shiki-token-parameter: #808000;
+  --shiki-token-function: #800080;
+  --shiki-token-string-expression: #1a8a1a;
+  --shiki-token-punctuation: var(--xp-text);
+  --shiki-token-link: #0000ee;
+}
+
+/* The elevation tokens are re-declared per element by
+   gradient-shadow-text.css (`body, body *`), so they must be re-bound on
+   every element too — otherwise the built-in glow wins on descendants. */
+body[data-dsh-windowsxp],
+body[data-dsh-windowsxp] *,
+body[data-dsh-windowsxp][data-ds-dark-theme],
+body[data-dsh-windowsxp][data-ds-dark-theme] * {
+  --dsw-elevation-stroke-color: var(--xp-gray);
+  --dsw-elevation-stroke: 0 0 0 1px var(--dsw-elevation-stroke-color);
+  --dsw-elevation-panel: 0 0 0 1px var(--xp-gray), 0 2px 8px #0000001f;
+  --dsw-elevation-prominent: 0 0 0 1px var(--xp-gray), 0 4px 16px #0000002e;
+  --dsw-elevation-soft: 0 0 0 1px var(--xp-gray), 0 2px 10px #0000001a;
+}
+
+/* ---------------------------------------------------------------------------
+ * 3. Chrome layer: the things tokens cannot express
+ * ------------------------------------------------------------------------ */
+
+body[data-dsh-windowsxp],
+body[data-dsh-windowsxp][data-ds-dark-theme] {
+  background-color: var(--xp-face);
+  color: var(--xp-text);
+  font-family: var(--dsw-font-family);
+}
+
+body[data-dsh-windowsxp] ::selection {
+  background: var(--xp-highlight);
+  color: #ffffff;
+}
+
+/* Text fields: white with XP's unmistakable #7F9DB9 hairline and square corners. */
+body[data-dsh-windowsxp] :is(input:not([type='checkbox']):not([type='radio']), textarea, select) {
+  background: var(--xp-field);
+  border: 1px solid var(--xp-field-border);
+  border-radius: 1px;
+  box-shadow: none;
+  color: var(--xp-text);
+  font-family: inherit;
+}
+
+/* Buttons: the Luna gradient, the #003C74 outline, a warm hover glow and a
+   pressed state.
+ *
+ * Widget-shaped buttons are excluded on purpose. They are <button> elements too,
+ * but their appearance belongs to the list, menu or picker that owns them, and a
+ * component's own state rule is far weaker than this one — so painting over them
+ * does not restyle them, it *erases* their states:
+ *
+ *   - ui-user-questions' choices are `role="radio"` / `role="checkbox"`, and
+ *     "selected" is nothing but `background: var(--dsw-alias-interactive-bg-hover)`
+ *     plus a border. Painting over it made selecting an option look exactly like
+ *     hovering it, i.e. like nothing happened at all;
+ *   - ui-conversation's view tabs are borderless underline tabs
+ *     (`.tab { background: 0 0; border: none; padding: 0 0 9px }` plus a 2px
+ *     `:after` underline), so the Luna gradient and a 1px border turned them into
+ *     chunky boxes on the beige toolbar band *and* added 2px of height.
+ *
+ * The role list is empirical, not guessed: grep the client bundles for
+ * `role: "…"` and these are the values that land on an interactive element.
+ *
+ * Excluded rather than overridden: forcing `background: transparent` back onto
+ * these roles would also flatten the selected-item highlight of every menu and
+ * listbox in the app, because a component's own `.item[aria-selected]` rule is
+ * far weaker than this one. `:not()` simply leaves them alone. `[class*=
+ * 'iconButton']` covers the other half of the same problem — DSH's CSS-module
+ * names keep their readable suffix (`Mbwy4a_iconButton`), and those are bare
+ * 24px hit targets whose whole point is having no chrome.
+ *
+ * The `:where()` wrapper around the exclusions is load-bearing. Each
+ * `:not([attr])` adds a class-level unit of specificity, so the plain chained
+ * form would lift this rule from (0,2,2) to (0,5,2) — above the sidebar's
+ * white-card rules at (0,3,2), silently undoing them. `:where()` contributes
+ * zero, so this keeps its original (0,2,2) and the sidebar keeps winning. */
+body[data-dsh-windowsxp] button:not(:disabled):where(:not([role='tab']):not([role='menuitem']):not([role='option']):not([role='treeitem'])
+    :not([role='radio']):not([role='checkbox']):not([role='switch'])
+    :not([role='menuitemradio']):not([role='menuitemcheckbox']):not([class*='iconButton'])
+  ) {
+  background: var(--xp-button);
+  border: 1px solid var(--xp-blue-dark);
+  border-radius: 3px;
+  font-family: inherit;
+}
+body[data-dsh-windowsxp] button:not(:disabled):where(:not([role='tab']):not([role='menuitem']):not([role='option']):not([role='treeitem'])
+    :not([role='radio']):not([role='checkbox']):not([role='switch'])
+    :not([role='menuitemradio']):not([role='menuitemcheckbox']):not([class*='iconButton'])
+  ):hover {
+  background: var(--xp-button-hover);
+}
+body[data-dsh-windowsxp] button:not(:disabled):where(:not([role='tab']):not([role='menuitem']):not([role='option']):not([role='treeitem'])
+    :not([role='radio']):not([role='checkbox']):not([role='switch'])
+    :not([role='menuitemradio']):not([role='menuitemcheckbox']):not([class*='iconButton'])
+  ):active {
+  background: var(--xp-button-active);
+  border-color: #7d7d7d;
+}
+/* Same widget exclusions as above: a disabled choice must still look disabled
+   *and* not look like a Luna button, and a busy question composer disables every
+   one of its options. */
+body[data-dsh-windowsxp] button:disabled:where(:not([role='tab']):not([role='menuitem']):not([role='option']):not([role='treeitem'])
+    :not([role='radio']):not([role='checkbox']):not([role='switch'])
+    :not([role='menuitemradio']):not([role='menuitemcheckbox']):not([class*='iconButton'])
+  ) {
+  background: var(--xp-face);
+  border: 1px solid var(--xp-gray);
+  color: var(--xp-gray);
+}
+
+/* The chosen answer in a question, which upstream distinguishes from *hover* by a
+ * border colour and nothing else:
+ *
+ *   .option:hover:not(:disabled), .optionSelected { background: var(--dsw-alias-interactive-bg-hover) }
+ *   .optionSelected                              { border-color: var(--dsw-alias-border-l2) }
+ *
+ * Deliberate upstream, but on a Luna card it is not enough to answer "which one
+ * did I pick?" — especially once the pointer has moved away. So a selected option
+ * picks up the selection blue as an inset ring, and it has to outrank the
+ * component's own `:hover:not(:disabled)` (0,3,0) as well as its selected rule
+ * (0,1,0) — hence (0,3,1), and hence `:not(:disabled)`, which is also what keeps
+ * a mid-submit disabled option from lighting up. */
+body[data-dsh-windowsxp] [class*='optionSelected']:not(:disabled) {
+  background: #dbe6f7;
+  border-color: var(--xp-highlight);
+  box-shadow: inset 0 0 0 1px var(--xp-highlight);
+}
+
+/* The composer's primary action — send / queue / steer, and stop during a run —
+ * owns its treatment, so it is carved back out of the generic button rules above.
+ *
+ * ui-conversation paints it `background: var(--dsw-alias-button-info-fill)` with
+ * a hard-coded `color: #fff` glyph:
+ *
+ *   .primary      { background: var(--dsw-alias-button-info-fill); color: #fff;
+ *                   border-radius: 999px; width: 34px; height: 34px }
+ *   .primary:disabled { opacity: .4 }
+ *
+ * The generic rule repainted the *fill* beige but cannot touch that hard-coded
+ * glyph colour, leaving white-on-beige: the send arrow and the stop square became
+ * an unreadable smudge exactly when the button mattered most — mid-run, when it
+ * becomes the stop control. Restoring the component's own paint fixes it, and
+ * costs nothing aesthetically because `--dsw-alias-button-info-fill` is already
+ * Luna blue in this skin: a solid blue circle with a white glyph, which is as XP
+ * as it gets.
+ *
+ * Both states share this one element and one class, so the skin cannot colour
+ * "stop" differently from "send"; what it can do is make the glyph legible in
+ * both. */
+body[data-dsh-windowsxp] [data-composer-seat] button[class*='_primary'] {
+  background: var(--dsw-alias-button-info-fill);
+  border: 0;
+  border-radius: 999px;
+  box-shadow: none;
+}
+body[data-dsh-windowsxp] [data-composer-seat] button[class*='_primary']:hover:not(:disabled) {
+  background: var(--dsw-alias-button-info-hover);
+}
+body[data-dsh-windowsxp] [data-composer-seat] button[class*='_primary']:active:not(:disabled) {
+  background: var(--xp-blue-dark);
+}
+body[data-dsh-windowsxp] [data-composer-seat] button[class*='_primary']:disabled {
+  background: var(--dsw-alias-button-info-fill);
+  border: 0;
+  color: var(--dsw-alias-label-primary-foreground);
+}
+
+/* The conversation's view tabs ship without any hover feedback, so the only thing
+   this skin adds is the colour. Everything else — the 2px underline, the active
+   colour — already resolves through `--dsw-alias-state-business-primary`, which
+   this skin points at Luna blue. */
+body[data-dsh-windowsxp] [data-conversation-tabs] [role='tab']:not(:disabled):hover {
+  color: var(--xp-blue);
+}
+
+/* Overwriting box-shadow/border removes whatever focus ring a control carried,
+   so XP's dotted focus rectangle is restored — only on the controls this
+   stylesheet restyled, never globally. */
+body[data-dsh-windowsxp] :is(button, input, textarea, select):focus-visible {
+  outline: 1px dotted var(--xp-text);
+  outline-offset: -4px;
+}
+
+/* ---------------------------------------------------------------------------
+ * 4. Explorer chrome
+ *
+ * The look in a Windows XP Explorer window is three bands, and each one is a
+ * different material:
+ *   beige toolbar band  |  blue task pane  |  white content pane
+ * DSH maps onto that as header / sidebar column / conversation root. The
+ * sidebar hooks are class substrings (`sidebarCol` comes from ui-layout) rather
+ * than whole hashed class names, because the hash changes on every DSH rebuild
+ * while the semantic suffix does not.
+ * ------------------------------------------------------------------------ */
+
+/* The toolbar / menu band above the content. */
+body[data-dsh-windowsxp] header {
+  background: var(--xp-face);
+}
+
+/* The desktop wallpaper behind the conversation.
+ *
+ * Deliberately NOT on `--dsw-alias-bg-base`. That token is consumed as a plain
+ * colour by fifteen-odd components — attachment chips, thumbnails, inline
+ * editors, sticky row headers, the browser iframe, the schedule panes — so a
+ * wallpaper value would sprout a miniature hill inside every one of them.
+ * (ui-theme even reads it with `background-color:` on `body`, where a gradient
+ * is simply invalid.)
+ *
+ * `[data-conversation-scroll]` is the conversation's scroll body: it wraps the
+ * message views *and* the composer seat, so it covers exactly the reading area.
+ * A scroll container paints its own background once, outside the scrolling
+ * content, which gives the desktop-behind-windows feel — messages slide over a
+ * stationary wallpaper.
+ *
+ * If a white band ever shows around this area, add
+ * `body[data-dsh-windowsxp] [class*='centerCol']` to this selector list to cover
+ * the whole centre column. It is left out on purpose: that column also hosts the
+ * terminal / browser / schedule panels, which should keep their own surfaces. */
+body[data-dsh-windowsxp] [data-conversation-scroll] {
+  background: var(--xp-wallpaper);
+}
+
+/* The task pane: a list of white cards floating on the periwinkle gradient.
+ *
+ * Two traps are worth naming, because both bit this skin:
+ *
+ *  1. The workspace list's hover AND selected state come from one single token.
+ *     ui-workspace writes `.projectRow:hover, .sessionRow:hover,
+ *     .sessionRow.selected { background: var(--dsw-alias-interactive-bg-hover) }`,
+ *     so whatever this skin does for hover it also does for "selected".
+ *  2. Flipping `--dsw-alias-label-*` to white here — the obvious way to make
+ *     text readable on the blue — makes it disappear again on every white card.
+ *
+ * The first version of this skin did both and produced white-on-#E4EDFA selected
+ * rows. The fix is to stop flipping the ink and let the cards carry it (which is
+ * what XP's task pane actually does), and to re-bind the *interactive* tokens
+ * inside this scope so hover/selected stay light enough for dark ink.
+ *
+ * Popovers are portalled to <body>, so they are not caught by this scope.
+ */
+body[data-dsh-windowsxp] [class*='sidebarCol'] {
+  --dsw-alias-interactive-bg-hover: #dce9f9;
+  --dsw-alias-interactive-bg-active: #c7d8f0;
+  --dsw-alias-interactive-bg-hover-solid: #dce9f9;
+  --dsw-alias-interactive-bg-hover-accent: #d3e2f7;
+  --dsw-specific-sidebar-nav-item-active: var(--xp-pane-card);
+  --dsw-specific-sidebar-nav-item-active-accent: var(--xp-pane-card);
+  --dsw-specific-sidebar-nav-item-hover: var(--xp-pane-card-hover);
+  --dsh-scrollbar-thumb: #ffffffb3;
+  --dsh-scrollbar-thumb-hover: #ffffff;
+}
+
+/* Put the pane gradient back on top of the solid token (see the note on
+   `--dsw-specific-sidebar-fill`): the token carries the flat middle stop so the
+   Windows caption strip can read it, and the gradient is painted here instead,
+   where only ui-sidebar is listening. `background-image` rather than
+   `background`, so the solid colour underneath stays intact.
+ *
+ * The `>` is load-bearing: only the sidebar's own root sits directly inside the
+ * layout column, so panels hosted *within* the sidebar keep their own surfaces.
+ * If that structure ever changes this silently degrades to a flat blue pane,
+ * which is still correct — just less pretty. */
+body[data-dsh-windowsxp] [class*='sidebarCol'] > [class*='_root'] {
+  background-image: var(--xp-pane);
+}
+
+/* Task-pane buttons (`新会话`, the panel rows, the rail icons) are white cards. */
+body[data-dsh-windowsxp] [class*='sidebarCol'] button:not(:disabled) {
+  background: var(--xp-pane-card);
+  border: 1px solid var(--xp-pane-card-border);
+  border-radius: 4px;
+  color: var(--xp-pane-ink);
+}
+body[data-dsh-windowsxp] [class*='sidebarCol'] button:not(:disabled):hover {
+  background: var(--xp-pane-card-hover);
+}
+body[data-dsh-windowsxp] [class*='sidebarCol'] button:not(:disabled):active {
+  background: #e2ebfb;
+  border-color: var(--xp-field-border);
+}
+body[data-dsh-windowsxp] [class*='sidebarCol'] :is(input, textarea, select) {
+  border-radius: 3px;
+}
+
+/* One white card per list row. This is what gives the pane its separation:
+   ui-workspace's rows are transparent and borderless, so without this a column
+   of sessions reads as one undifferentiated block of text. `box-shadow` rather
+   than `border` on purpose — the rows set their own height and padding, and a
+   border would push the layout around.
+
+   These rules come AFTER the button rules above and repeat the button variant in
+   the selector list on purpose: a row that happens to be a <button> (search
+   results are) would otherwise tie on specificity and lose to the button rule,
+   painting a Luna gradient over the card. */
+body[data-dsh-windowsxp] [class*='sidebarCol'] :is([class*='projectRow'], [class*='sessionRow'], [class*='searchResultRow']),
+body[data-dsh-windowsxp] [class*='sidebarCol'] button:is([class*='projectRow'], [class*='sessionRow'], [class*='searchResultRow']) {
+  background: var(--xp-pane-card);
+  border-color: var(--xp-pane-card-border);
+  box-shadow: inset 0 0 0 1px var(--xp-pane-card-border);
+  color: var(--xp-pane-ink);
+  margin-bottom: 3px;
+}
+
+/* "Which session am I in?"
+ *
+ * ui-workspace marks it with `.sessionRow.selected`, but that rule is only
+ * (0,2,0) — the plain row card above is (0,3,1) and flattens it, which is exactly
+ * how one revision of this skin made every row look identical. Restored here,
+ * and deliberately with the classic Windows solid selection rather than another
+ * subtle tint: the current session has to be obvious at a glance.
+ *
+ * The label tokens are re-bound ON THE ROW, not via `color`, because descendants
+ * read them directly — `.time` uses `--dsw-alias-label-tertiary`. */
+body[data-dsh-windowsxp] [class*='sidebarCol'] :is([class*='projectRow'], [class*='sessionRow'], [class*='searchResultRow']):is([class*='selected'], [class*='folderActive']),
+body[data-dsh-windowsxp] [class*='sidebarCol'] button:is([class*='projectRow'], [class*='sessionRow'], [class*='searchResultRow']):is([class*='selected'], [class*='folderActive']) {
+  background: var(--xp-highlight);
+  border-color: #1b4a94;
+  box-shadow: inset 0 0 0 1px #1b4a94;
+  color: #ffffff;
+  --dsw-alias-label-primary: #ffffff;
+  --dsw-alias-label-primary-bluish: #ffffff;
+  --dsw-alias-label-secondary: #eaf0ff;
+  --dsw-alias-label-tertiary: #eaf0ff;
+  --dsw-alias-label-caption: #dce9f9;
+  --dsw-alias-label-dimmed: #dce9f9;
+}
+
+/* Menus, dialogs and popovers: a beige Luna panel with a soft shadow. */
+body[data-dsh-windowsxp] :is([data-menu-material], [role='menu'], [role='listbox'], [role='dialog'], [data-radix-popper-content-wrapper] > *) {
+  background: var(--xp-face);
+  border: 1px solid var(--xp-gray);
+  border-radius: 3px;
+  box-shadow: 0 3px 10px #00000033;
+  backdrop-filter: none;
+}
+
+/* ...but tooltips kept the pale yellow of the 9x era. */
+body[data-dsh-windowsxp] :is([role='tooltip'], [data-tooltip], [data-dsw-tooltip]) {
+  background: #ffffe1;
+  border: 1px solid var(--xp-text);
+  border-radius: 0;
+  box-shadow: none;
+  color: var(--xp-text);
+}
+
+/* The rounded, gradient, blue Luna scrollbar. */
+body[data-dsh-windowsxp] ::-webkit-scrollbar {
+  width: var(--dsh-scrollbar-width);
+  height: var(--dsh-scrollbar-width);
+}
+body[data-dsh-windowsxp] ::-webkit-scrollbar-track {
+  background: #f1efe2;
+  box-shadow: inset 1px 0 #d6d2c2;
+}
+body[data-dsh-windowsxp] ::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #dce4f5 0%, #c3d0ec 50%, #afc0e6 100%);
+  background-clip: border-box;
+  border: 1px solid #8fa5ce;
+  border-radius: 3px;
+}
+body[data-dsh-windowsxp] ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg, #d2def7 0%, #b4c6ee 50%, #9fb4e4 100%);
+}
+body[data-dsh-windowsxp] ::-webkit-scrollbar-corner {
+  background: var(--xp-face);
+}
+
+/* The boot screen before plugins mount. */
+body[data-dsh-windowsxp] [data-dsh-boot] {
+  background-color: var(--xp-face);
+  color: var(--xp-text);
+}
