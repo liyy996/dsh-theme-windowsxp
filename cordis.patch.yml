@@ -1,0 +1,11 @@
+# Windows XP (Luna) skin bundle patch.
+#
+# A DSH "bundle" is a package that ships a patch file naming the loader rows it
+# contributes. This one inserts a single row into the browser plugin roster:
+# `id` is the loader/fiber identity — and the very id the sidebar's Plugins page
+# shows as a one-click switch — while `name` is the package specifier the host
+# imports. Adding `dsh-theme-windowsxp` to `dsh.profile.bundles` in the profile's
+# package.json is what makes this patch apply.
+- insert:
+    - id: ui-skin-windowsxp
+      name: 'dsh-theme-windowsxp'

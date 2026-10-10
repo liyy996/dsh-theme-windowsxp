@@ -1,0 +1,72 @@
+{
+  "name": "dsh-theme-windowsxp",
+  "version": "0.1.0",
+  "description": "把 DSH 换成 Windows XP：Luna 蓝皮肤（米色面板、渐变按钮、#7F9DB9 输入框、圆角滚动条、Bliss 桌面壁纸）＋ 一轮跑完时的提示音与完成弹窗。",
+  "type": "module",
+  "license": "MIT",
+  "author": "liyy996",
+  "homepage": "https://github.com/liyy996/dsh-theme-windowsxp#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liyy996/dsh-theme-windowsxp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/liyy996/dsh-theme-windowsxp/issues"
+  },
+  "keywords": [
+    "deepseek",
+    "harness",
+    "dsh",
+    "dsh-plugin",
+    "theme",
+    "skin",
+    "windows-xp",
+    "luna"
+  ],
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/client.js",
+    "cordis.patch.yml",
+    "src",
+    "preview",
+    "locale",
+    "token-inventory.json",
+    "LICENSE",
+    "NOTICE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "node scripts/check-tokens.mjs && node scripts/check-cascade.mjs",
+    "test": "node scripts/smoke.mjs && node scripts/smoke-host.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dsh": {
+    "manifestVersion": 1,
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [],
+      "platform": "web"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "~4.0.4",
+    "@deepseek-ai/dsh": ">=0.1.7-rc.1 <0.3.0-0"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh": {
+      "optional": true
+    }
+  }
+}

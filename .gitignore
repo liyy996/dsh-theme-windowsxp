@@ -1,0 +1,17 @@
+# Microsoft-copyrighted assets, present on this machine only.
+#
+#   assets/bliss.jpg   the "Bliss" photograph, © Microsoft / Charles O'Rear
+#   assets/chime.wav   chimes.wav, © Microsoft
+#
+# Both are already excluded from `files` in package.json, and they must never be
+# committed either: this package's MIT licence does not cover them, and a public
+# repository is a redistribution.
+#
+# Nothing breaks without them. The skin falls back to the pure-CSS recreation of
+# the Bliss composition held in `--xp-wallpaper-fallback`, and the notifier falls
+# back to the synthesised bell in `playSynth()`. See NOTICE.
+assets/
+
+# Dependencies and build noise
+node_modules/
+*.log
