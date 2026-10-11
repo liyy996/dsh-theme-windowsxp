@@ -474,7 +474,7 @@ body[data-dsh-windowsxp] [data-composer-seat] button[class*='_primary']:disabled
   color: var(--dsw-alias-label-primary-foreground);
 }
 
-/* The conversation's view tabs, restyled as XP task-pane cards.
+/* The conversation's view tabs.
  *
  * Upstream ships them as bare words with a 2px underline for the active one —
  * there is no border anywhere in `.tab`:
@@ -483,39 +483,45 @@ body[data-dsh-windowsxp] [data-composer-seat] button[class*='_primary']:disabled
  *   .tabActive { color: var(--dsw-alias-state-business-primary) }
  *   .tabActive:after { background: var(--dsw-alias-state-business-primary) }
  *
- * On a white app that reads fine. On this skin's beige toolbar band it read as
- * loose text — and worse, the focus ring (mine is a 1px dotted rectangle pulled
- * 4px inside the box) landed as a small mis-drawn box hugging the active word.
- * Reported as "第一张图那里很不好看".
+ * On this skin's beige toolbar band that read as loose text, and the active tab
+ * also wore the focus ring — a 1px dotted rectangle pulled 4px inside the box —
+ * so it landed as a small mis-drawn box hugging the word. Reported as
+ * "第一张图那里很不好看".
  *
- * They now speak the same language as the sidebar rows and the dropdown menus:
- * a white card with a thin blue border. Same vocabulary in three places, instead
- * of three different ones. */
+ * A white card was tried next and rejected too ("白色不是很好看"): pure white is
+ * too stark against the cream band. So they are drawn in the band's own colour
+ * with the Windows bevel doing the work, which is exactly how an XP toolbar shows
+ * a toggled-on button:
+ *
+ *   resting = --xp-face, raised  (white top-left edge, grey bottom-right)
+ *   current = --xp-face, sunken  (the bevel reversed) plus the darker blue ink
+ *
+ * No white anywhere, and the state reads from the shape alone. */
 body[data-dsh-windowsxp] [data-conversation-tabs] {
   /* Upstream spaces the tabs 36px apart, which only works for bare words. */
   gap: 6px;
 }
 
 body[data-dsh-windowsxp] [data-conversation-tabs] [role='tab'] {
-  background: #ffffff;
+  background: var(--xp-face);
   border: 0;
-  border-radius: 4px;
-  box-shadow: inset 0 0 0 1px #b8c8ea;
-  color: #00309c;
+  border-radius: 2px;
+  /* box-shadow rather than border: the tab already carries padding and a line
+     height, and a real border would push the whole row taller. */
+  box-shadow: inset 1px 1px 0 #ffffff, inset -1px -1px 0 var(--xp-gray);
+  color: #4a4a44;
   padding: 4px 12px;
   font-weight: 400;
 }
 
-/* The card is the indicator now, so the underline would double up with it. */
+/* The bevel is the indicator now, so the underline would double up with it. */
 body[data-dsh-windowsxp] [data-conversation-tabs] [role='tab']::after {
   display: none;
 }
 
-/* The tab you are on: the same card with the selection blue in place of the
-   resting border, and the weight to match. Deliberately not a solid blue fill —
-   a block of saturated blue would fight the Luna band it sits on. */
+/* The view you are on: same beige, pressed. */
 body[data-dsh-windowsxp] [data-conversation-tabs] [role='tab'][aria-selected='true'] {
-  box-shadow: inset 0 0 0 1px var(--xp-highlight), inset 0 -3px 0 var(--xp-highlight);
+  box-shadow: inset 1px 1px 0 var(--xp-gray), inset -1px -1px 0 #ffffff;
   color: var(--xp-blue-dark);
   font-weight: 600;
 }
@@ -530,9 +536,9 @@ body[data-dsh-windowsxp] [data-conversation-tabs] [role='tab']:not(:disabled):ho
    same trap the question composer's options fell into, so it is spelled out
    rather than left to chance. */
 body[data-dsh-windowsxp] [data-conversation-tabs] [role='tab'][aria-selected='true']:not(:disabled):hover {
-  background: #ffffff;
+  background: var(--xp-face);
   color: var(--xp-blue-dark);
-  box-shadow: inset 0 0 0 1px var(--xp-highlight), inset 0 -3px 0 var(--xp-highlight);
+  box-shadow: inset 1px 1px 0 var(--xp-gray), inset -1px -1px 0 #ffffff;
 }
 
 /* A tab still needs a visible focus indicator, so the ring moves *inside* the
