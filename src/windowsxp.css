@@ -474,12 +474,73 @@ body[data-dsh-windowsxp] [data-composer-seat] button[class*='_primary']:disabled
   color: var(--dsw-alias-label-primary-foreground);
 }
 
-/* The conversation's view tabs ship without any hover feedback, so the only thing
-   this skin adds is the colour. Everything else — the 2px underline, the active
-   colour — already resolves through `--dsw-alias-state-business-primary`, which
-   this skin points at Luna blue. */
+/* The conversation's view tabs, restyled as XP task-pane cards.
+ *
+ * Upstream ships them as bare words with a 2px underline for the active one —
+ * there is no border anywhere in `.tab`:
+ *
+ *   .tab       { background: 0 0; border: none; padding: 0 0 9px }
+ *   .tabActive { color: var(--dsw-alias-state-business-primary) }
+ *   .tabActive:after { background: var(--dsw-alias-state-business-primary) }
+ *
+ * On a white app that reads fine. On this skin's beige toolbar band it read as
+ * loose text — and worse, the focus ring (mine is a 1px dotted rectangle pulled
+ * 4px inside the box) landed as a small mis-drawn box hugging the active word.
+ * Reported as "第一张图那里很不好看".
+ *
+ * They now speak the same language as the sidebar rows and the dropdown menus:
+ * a white card with a thin blue border. Same vocabulary in three places, instead
+ * of three different ones. */
+body[data-dsh-windowsxp] [data-conversation-tabs] {
+  /* Upstream spaces the tabs 36px apart, which only works for bare words. */
+  gap: 6px;
+}
+
+body[data-dsh-windowsxp] [data-conversation-tabs] [role='tab'] {
+  background: #ffffff;
+  border: 0;
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px #b8c8ea;
+  color: #00309c;
+  padding: 4px 12px;
+  font-weight: 400;
+}
+
+/* The card is the indicator now, so the underline would double up with it. */
+body[data-dsh-windowsxp] [data-conversation-tabs] [role='tab']::after {
+  display: none;
+}
+
+/* The tab you are on: the same card with the selection blue in place of the
+   resting border, and the weight to match. Deliberately not a solid blue fill —
+   a block of saturated blue would fight the Luna band it sits on. */
+body[data-dsh-windowsxp] [data-conversation-tabs] [role='tab'][aria-selected='true'] {
+  box-shadow: inset 0 0 0 1px var(--xp-highlight), inset 0 -3px 0 var(--xp-highlight);
+  color: var(--xp-blue-dark);
+  font-weight: 600;
+}
+
 body[data-dsh-windowsxp] [data-conversation-tabs] [role='tab']:not(:disabled):hover {
+  background: var(--xp-hot);
   color: var(--xp-blue);
+}
+
+/* Hovering the tab you are already on must not erase that. A bare `:hover` rule
+   outranks `[aria-selected='true']` here — (0,5,1) against (0,4,1) — which is the
+   same trap the question composer's options fell into, so it is spelled out
+   rather than left to chance. */
+body[data-dsh-windowsxp] [data-conversation-tabs] [role='tab'][aria-selected='true']:not(:disabled):hover {
+  background: #ffffff;
+  color: var(--xp-blue-dark);
+  box-shadow: inset 0 0 0 1px var(--xp-highlight), inset 0 -3px 0 var(--xp-highlight);
+}
+
+/* A tab still needs a visible focus indicator, so the ring moves *inside* the
+   card — there it reads as focus rather than as damage. Both declarations are
+   needed: `outline` alone would let the ring keep hugging the glyphs. */
+body[data-dsh-windowsxp] [data-conversation-tabs] [role='tab']:focus-visible {
+  outline: 1px dotted var(--xp-text);
+  outline-offset: -3px;
 }
 
 /* Overwriting box-shadow/border removes whatever focus ring a control carried,

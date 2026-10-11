@@ -198,6 +198,24 @@ const sidebarButton = best("sidebar white-card button", (s) => s.includes("[clas
 const sidebarHover = best("sidebar white-card :hover", (s) => s.includes("[class*='sidebarCol'] button:not(:disabled)") && s.includes(":hover"), { states: true });
 const sidebarRow = best("sidebar row card", (s) => s.includes("searchResultRow']") && !s.includes("folderActive"));
 const selectedRow = best("current-session row", (s) => s.includes("folderActive"));
+const tabCard = best(
+  "tab card",
+  (s) => s.includes("[data-conversation-tabs]") && s.includes("[role='tab']") && !s.includes("aria-selected"),
+);
+const tabActive = best(
+  "active tab",
+  (s) => s.includes("[data-conversation-tabs]") && s.includes("aria-selected") && !s.includes(":hover"),
+);
+const tabHover = best(
+  "tab hover",
+  (s) => s.includes("[data-conversation-tabs]") && s.includes(":hover") && !s.includes("aria-selected"),
+  { states: true },
+);
+const tabActiveHover = best(
+  "active tab hover",
+  (s) => s.includes("[data-conversation-tabs]") && s.includes("aria-selected") && s.includes(":hover"),
+  { states: true },
+);
 const primaryAction = best(
   "composer primary action",
   (s) => s.includes("[data-composer-seat] button[class*='_primary']") && !/:(hover|active|disabled)\b/.test(s),
@@ -275,6 +293,17 @@ ordered("the chosen answer outranks the generic button", optionSelected, generic
 // the assertion above covers the rule that genuinely competes — the component's
 // own hover at (0,3,0).
 ordered("the chosen answer outranks the generic :disabled", optionSelected, genericDisabled);
+
+console.log("\nthe conversation's view tabs");
+for (const rule of [tabCard, tabActive, tabHover, tabActiveHover]) {
+  console.log(`       ${rule.name.padEnd(28)} ${show(rule.tuple)}  @${rule.order}`);
+}
+ordered("the active tab outranks the resting card", tabActive, tabCard);
+ordered("hovering the active tab keeps it looking active", tabActiveHover, tabHover);
+// The component's own rules are `.tab` at (0,1,0) and `.tabActive` at (0,2,0), so
+// the skin has to clear both — which is why these carry two attribute selectors.
+check("the tab card outranks the component's bare tab (0,1,0)", tabCard.tuple[1] > 1 || tabCard.tuple[0] > 0, show(tabCard.tuple));
+check("the active tab outranks the component's own active rule (0,2,0)", tabActive.tuple[1] > 2 || tabActive.tuple[0] > 0, show(tabActive.tuple));
 
 /** One boolean assertion, counted the same way `unit`/`ordered` count. */
 function check(label, condition, detail = "") {
